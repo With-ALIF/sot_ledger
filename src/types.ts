@@ -14,6 +14,7 @@ export interface Payment {
   amount: number;
   method: PaymentMethod;
   phone_number: string;
+  label?: string;
   message?: string;
   created_at: string;
   partner?: string;

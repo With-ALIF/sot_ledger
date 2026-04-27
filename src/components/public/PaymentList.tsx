@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'motion/react';
 import { Payment, SortOption, PaymentMethod, Course } from '../../types';
 import { cn } from '../../lib/utils';
-import { Trash2, ArrowUpDown, Smartphone, Search, X, AlertTriangle, FileDown, User, Edit2, Check, Loader2, GraduationCap } from 'lucide-react';
+import { Trash2, ArrowUpDown, Smartphone, Search, X, AlertTriangle, FileDown, User, Edit2, Check, Loader2, GraduationCap, ClipboardPaste } from 'lucide-react';
 import { PAYMENT_LOGOS, PARTNER_ICONS } from '../../constants';
 import { useState, useMemo } from 'react';
 import jsPDF from 'jspdf';
@@ -62,6 +62,7 @@ export default function PaymentList({
       p.phone_number.includes(searchQuery) || 
       p.amount.toString().includes(searchQuery) ||
       p.method.toLowerCase().includes(query) ||
+      (p.label && p.label.toLowerCase().includes(query)) ||
       (p.message && p.message.toLowerCase().includes(query)) ||
       (courses.find(c => c.id === p.course_id)?.name.toLowerCase().includes(query))
     );
@@ -119,6 +120,7 @@ export default function PaymentList({
         p.method,
         p.phone_number,
         `TK ${p.amount.toFixed(2)}`,
+        p.label || '-',
         courseName,
         p.partner || '-',
         format(new Date(p.created_at), 'MMM d, yyyy h:mm a'),
@@ -128,7 +130,7 @@ export default function PaymentList({
     
     // Generate table
     autoTable(doc, {
-      head: [['Method', 'Phone Number', 'Amount', 'Course', 'Partner', 'Date', 'Message']],
+      head: [['Method', 'Phone Number', 'Amount', 'Label', 'Course', 'Partner', 'Date', 'Message']],
       body: data,
       startY: 60,
       styles: { fontSize: 8, cellPadding: 2 },
@@ -149,6 +151,7 @@ export default function PaymentList({
       method: editingPayment.method,
       amount: editingPayment.amount,
       phone_number: editingPayment.phone_number,
+      label: editingPayment.label,
       message: editingPayment.message,
       course_id: editingPayment.course_id
     });
@@ -377,6 +380,12 @@ export default function PaymentList({
                               <Smartphone className="w-2.5 h-2.5 sm:w-3 h-3 shrink-0" />
                               <span className="truncate">{payment.phone_number}</span>
                             </div>
+                            {payment.label && (
+                              <span className="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 shrink-0 border border-amber-100">
+                                <ClipboardPaste className="w-2.5 h-2.5" />
+                                {payment.label}
+                              </span>
+                            )}
                             <span className={cn(
                               "text-[9px] sm:text-[10px] uppercase font-bold px-1 sm:px-1.5 py-0.5 rounded shrink-0",
                               payment.method === 'Bkash' && "text-pink-600 bg-pink-50",
@@ -539,6 +548,17 @@ export default function PaymentList({
                       <option key={course.id} value={course.id}>{course.name}</option>
                     ))}
                   </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-500 ml-1">লেবেল (ঐচ্ছিক)</label>
+                  <input
+                    type="text"
+                    value={editingPayment.label || ''}
+                    onChange={(e) => setEditingPayment({ ...editingPayment, label: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                    placeholder="যেমন: ১ল কিস্তি"
+                  />
                 </div>
 
                 <div className="space-y-1.5">

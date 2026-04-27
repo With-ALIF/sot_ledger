@@ -19,6 +19,7 @@ export default function PaymentForm({ onAddPayment, courses, onLogout }: Payment
     amount: '',
     method: 'Bkash' as PaymentMethod,
     phone_number: '',
+    label: '',
     message: '',
     partner: '',
     course_id: ''
@@ -42,6 +43,7 @@ export default function PaymentForm({ onAddPayment, courses, onLogout }: Payment
         ...prev,
         amount: amountMatch ? amountMatch[1].replace(/,/g, '') : prev.amount,
         phone_number: phoneMatch ? phoneMatch[0] : prev.phone_number,
+        label: text.match(/Label:\s*([^\n]+)/i)?.[1] || prev.label,
         message: trxMatch ? trxMatch[1] : prev.message,
         method: detectedMethod || prev.method
       }));
@@ -61,6 +63,7 @@ export default function PaymentForm({ onAddPayment, courses, onLogout }: Payment
       amount: '',
       method: 'Bkash',
       phone_number: '',
+      label: '',
       message: '',
       partner: '',
       course_id: ''
@@ -77,6 +80,7 @@ export default function PaymentForm({ onAddPayment, courses, onLogout }: Payment
       amount: parseFloat(formData.amount),
       method: formData.method,
       phone_number: formData.phone_number,
+      label: formData.label || undefined,
       message: formData.message,
       partner: formData.partner || undefined,
       course_id: formData.course_id || undefined
@@ -87,6 +91,7 @@ export default function PaymentForm({ onAddPayment, courses, onLogout }: Payment
         amount: '',
         method: 'Bkash',
         phone_number: '',
+        label: '',
         message: '',
         partner: '',
         course_id: ''
@@ -158,6 +163,48 @@ export default function PaymentForm({ onAddPayment, courses, onLogout }: Payment
             value={formData.phone_number}
             onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
             placeholder="যেমন: 017XXXXXXXX"
+            className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:opacity-50"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
+            <ClipboardPaste className="w-4 h-4" /> লেবেল (ঐচ্ছিক)
+          </label>
+          <input
+            type="text"
+            disabled={isSubmitting}
+            value={formData.label}
+            onChange={(e) => setFormData({ ...formData, label: e.target.value })}
+            placeholder="যেমন: ১ল কিস্তি, পুরাতন স্টুডেন্ট"
+            className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:opacity-50"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
+            <ClipboardPaste className="w-4 h-4" /> লেবেল (ঐচ্ছিক)
+          </label>
+          <input
+            type="text"
+            disabled={isSubmitting}
+            value={formData.label}
+            onChange={(e) => setFormData({ ...formData, label: e.target.value })}
+            placeholder="যেমন: ১ল কিস্তি, পুরাতন স্টুডেন্ট"
+            className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:opacity-50"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
+            <ClipboardPaste className="w-4 h-4" /> লেবেল (ঐচ্ছিক)
+          </label>
+          <input
+            type="text"
+            disabled={isSubmitting}
+            value={formData.label}
+            onChange={(e) => setFormData({ ...formData, label: e.target.value })}
+            placeholder="যেমন: ১ল কিস্তি, পুরাতন স্টুডেন্ট"
             className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:opacity-50"
           />
         </div>
