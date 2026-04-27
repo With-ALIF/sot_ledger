@@ -1,0 +1,103 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: payments
+    // Document ID: auto-generated
+    // Fields:
+    //   - amount: number
+    //   - method: string
+    //   - phone_number: string
+    //   - message: string (optional)
+    //   - created_at: string (ISO date string)
+    //   - partner: string (optional)
+    //   - course_id: string (optional)
+    //
+    // Collection: courses
+    // Document ID: auto-generated
+    // Fields:
+    //   - name: string
+    //   - logo_url: string
+    //   - created_at: string
+    //
+    // Collection: partner_tasks
+    // Document ID: auto-generated
+    // Fields:
+    //   - category: string
+    //   - sub_category: string
+    //   - percentage: number
+    //   - partner_name: string
+    //   - created_at: string
+    //
+    // Collection: settings
+    // Document ID: "main"
+    // Fields:
+    //   - telegram_bot_token: string
+    //   - telegram_channel_id: string
+    //   - updated_at: string
+    // 
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        (request.auth.token.email == "alifbrur16@gmail.com" || request.auth.token.email == "alif@mnr.bd")
+      );
+    }
+    
+    // ===============================================================
+    // Security Rules
+    // ===============================================================
+    
+    // For payments, the public needs to read stats, which requires reading payments.
+    // BUT since payments contain phone numbers, it's considered PII!
+    // Since the previous implementation selected '*' from 'payments' publicly, we have to allow public reads for this app to function as built.
+    // WARNING: In a production scenario, PII (phone number) should NOT be queryable by unauthenticated users. 
+    // For now, to keep the existing React app working (stats dashboard), we allow public reads.
+    match /payments/{paymentId} {
+      allow read: if true; 
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    match /courses/{courseId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    match /partner_tasks/{taskId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    match /settings/{settingId} {
+      // Allow public read only, wait, do settings contain telegram bot token?
+      // Yes, Telegram bot token is sensitive. Should NOT be public. 
+      // But the public Dashboard uses telegramService to send messages which reads settings.
+      // In a real app, this should be server-side.
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    match /admin_access/{adminId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+  }
+}

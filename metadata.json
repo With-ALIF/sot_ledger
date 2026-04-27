@@ -1,0 +1,5 @@
+{
+  "name": "SOT PAYMENT",
+  "description": "A clean and efficient system to track student payments via Bkash, Nagad, and other methods, ready for Supabase integration.",
+  "requestFramePermissions": []
+}

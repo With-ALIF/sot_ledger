@@ -1,0 +1,85 @@
+{
+  "entities": {
+    "Payment": {
+      "title": "Payment",
+      "description": "A payment record",
+      "type": "object",
+      "properties": {
+        "amount": { "type": "number", "description": "Payment amount" },
+        "method": { "type": "string", "enum": ["Bkash", "Nagad", "Rocket", "Bank", "Other"] },
+        "phone_number": { "type": "string" },
+        "message": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "partner": { "type": "string" },
+        "course_id": { "type": "string" }
+      },
+      "required": ["amount", "method", "phone_number", "created_at"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "A course definition",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "logo_url": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name"]
+    },
+    "PartnerTask": {
+      "title": "PartnerTask",
+      "description": "A task assigned to a partner",
+      "type": "object",
+      "properties": {
+        "category": { "type": "string" },
+        "sub_category": { "type": "string" },
+        "percentage": { "type": "number" },
+        "partner_name": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["category", "sub_category", "percentage"]
+    },
+    "AppSetting": {
+      "title": "AppSetting",
+      "description": "Application settings",
+      "type": "object",
+      "properties": {
+        "telegram_bot_token": { "type": "string" },
+        "telegram_channel_id": { "type": "string" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "AdminAccess": {
+      "title": "AdminAccess",
+      "description": "Simple admin credentials. In a real app we would use Firebase Auth. This is migrated from Supabase simple table.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "password": { "type": "string" }
+      },
+      "required": ["email", "password"]
+    }
+  },
+  "firestore": {
+    "/payments/{paymentId}": {
+      "schema": { "$ref": "#/entities/Payment" },
+      "description": "Payments collection"
+    },
+    "/courses/{courseId}": {
+      "schema": { "$ref": "#/entities/Course" },
+      "description": "Courses collection"
+    },
+    "/partner_tasks/{taskId}": {
+      "schema": { "$ref": "#/entities/PartnerTask" },
+      "description": "Tasks assigned to partners"
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/AppSetting" },
+      "description": "Global settings for the application"
+    },
+    "/admin_access/{adminId}": {
+      "schema": { "$ref": "#/entities/AdminAccess" },
+      "description": "Admin access credentials"
+    }
+  }
+}
